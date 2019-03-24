@@ -40,19 +40,54 @@
 The ScratchView will fill its containing view and cover all other content untill you scratch it
 Just put it as the last component in your view
 ```javascript
-import ScratchView from 'react-native-scratch';
+import React, { Component } from 'react';
+import { View } from 'react-native';
+import ScratchView from 'react-native-scratch'
 
-<View style={{ width: 150, height: 150 }}>
-	<ComponentA> // will be covered
-	<ComponentB> // will be covered
-	<ScratchView
-		id={1} // optional
-		threshold={70} // report full scratch after 70 percentage, change as you see fit
-		imageUrl="http://yourUrlToImage.jpg"
-		onTouchStateChanged={this.onTouchStateChangedMethod}
-		onScratchProgressChanged={this.onScratchProgressChanged}
-		onScratchDone={this.onScratchDone}
-		/>}
-</View>
+class MyView extends Component {
+
+	onImageLoadFinished = ({ id, success }) => {
+		// Do something
+	}
+
+	onScratchProgressChanged = ({ value, id }) => {
+		// Do domething like showing the progress to the user
+	}
+
+	onScratchDone = ({ isScratchDone, id }) => {
+		// Do something
+	}
+
+	onScratchTouchStateChanged = ({ id, touchState }) => {
+		// Example: change a stat value to stop a the
+		// containing FlatList from scrolling while scratching
+    	this.setState({ scrollEnabled: !touchState });
+  	}
+
+	render() {
+		<View style={{ width: 300, height: 300 }}>
+			<ComponentA> // will be covered with the ScratchView
+			<ComponentB> // will be covered with the ScratchView
+			<ScratchView
+				id={1} // ScratchView id (Optional)
+				brachSize={10} // Default is 10% of the smallest dimension (width/height)
+				threshold={70} // Report full scratch after 70 percentage, change as you see fit. Default is 50
+				fadeOut={false} // Disable the fade out animation when scratch is done. default is true
+				placeholderColor="#AAAAAA" // Scratch color while image is loading (or while image not present)
+				imageUrl="http://yourUrlToImage.jpg" // the url to your image (Optional)
+				onImageLoadFinished={this.onImageLoadFinished} // Event to indicate that the image has done loading
+				onTouchStateChanged={this.onTouchStateChangedMethod} // Touch event
+				onScratchProgressChanged={this.onScratchProgressChanged} // Scratch progress event while scratching
+				onScratchDone={this.onScratchDone} // Scratch is done event
+			/>}
+
+			<ScratchView
+				id={2} // optional ScratchView id
+				...
+			/>}
+		</View>
+	}
+
+export default MyView;
 ```
   
