@@ -61,11 +61,11 @@ class MyView extends Component {
 	onScratchTouchStateChanged = ({ id, touchState }) => {
 		// Example: change a stat value to stop a the
 		// containing FlatList from scrolling while scratching
-    	this.setState({ scrollEnabled: !touchState });
-  	}
+		this.setState({ scrollEnabled: !touchState });
+	}
 
 	render() {
-		<View style={{ width: 300, height: 300 }}>
+		return (<View style={{ width: 300, height: 300 }}>
 			<ComponentA> // will be covered with the ScratchView
 			<ComponentB> // will be covered with the ScratchView
 			<ScratchView
@@ -76,7 +76,7 @@ class MyView extends Component {
 				placeholderColor="#AAAAAA" // Scratch color while image is loading (or while image not present)
 				imageUrl="http://yourUrlToImage.jpg" // the url to your image (Optional)
 				onImageLoadFinished={this.onImageLoadFinished} // Event to indicate that the image has done loading
-				onTouchStateChanged={this.onTouchStateChangedMethod} // Touch event
+				onTouchStateChanged={this.onTouchStateChangedMethod} // Touch event (to stop a containing FlatList for example)
 				onScratchProgressChanged={this.onScratchProgressChanged} // Scratch progress event while scratching
 				onScratchDone={this.onScratchDone} // Scratch is done event
 			/>}
@@ -85,7 +85,7 @@ class MyView extends Component {
 				id={2} // optional ScratchView id
 				...
 			/>}
-		</View>
+		</View>)
 	}
 
 export default MyView;
