@@ -64,12 +64,17 @@ class ScratchView extends Component {
     }
 
     fadeOut(postAction) {
-        this.state.animatedValue.setValue(1);
-        Animated.timing(this.state.animatedValue, {
-            toValue: 0,
-            duration: 300,
-            useNativeDriver: true,
-        }).start(postAction);
+        if (this.props.fadeOut === false) {
+            postAction();
+        }
+        else {
+            this.state.animatedValue.setValue(1);
+            Animated.timing(this.state.animatedValue, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: true,
+            }).start(postAction);
+        }
     }
 
     render() {
