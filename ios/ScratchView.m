@@ -11,7 +11,6 @@
   self = [super init];
   self.userInteractionEnabled = true;
   self.exclusiveTouch = true;
-  [self reset];
   return self;
 }
 
@@ -21,7 +20,6 @@
     self.multipleTouchEnabled = NO;
     self.userInteractionEnabled = true;
     self.exclusiveTouch = true;
-    [self reset];
   }
   return self;
 }
@@ -49,7 +47,6 @@
 -(void) setImageUrl:(NSString *)url
 {
   imageUrl = url;
-  [self reset];
 }
 
 -(void) setThreshold: (float)value
@@ -60,7 +57,6 @@
 -(void) setBrushSize: (float)value
 {
   brushSize = value;
-  [self reset];
 }
 
 -(void)loadImage

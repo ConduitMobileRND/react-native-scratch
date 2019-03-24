@@ -65,9 +65,8 @@ class ScratchView extends Component {
 
     fadeOut(postAction) {
         if (this.props.fadeOut === false) {
-            postAction();
-        }
-        else {
+            postAction && postAction();
+        } else {
             this.state.animatedValue.setValue(1);
             Animated.timing(this.state.animatedValue, {
                 toValue: 0,
