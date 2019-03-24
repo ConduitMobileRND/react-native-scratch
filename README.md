@@ -59,8 +59,8 @@ class MyView extends Component {
 	}
 
 	onScratchTouchStateChanged = ({ id, touchState }) => {
-		// Example: change a stat value to stop a the
-		// containing FlatList from scrolling while scratching
+		// Example: change a state value to stop a containing
+		// FlatList from scrolling while scratching
 		this.setState({ scrollEnabled: !touchState });
 	}
 
@@ -79,11 +79,6 @@ class MyView extends Component {
 				onTouchStateChanged={this.onTouchStateChangedMethod} // Touch event (to stop a containing FlatList for example)
 				onScratchProgressChanged={this.onScratchProgressChanged} // Scratch progress event while scratching
 				onScratchDone={this.onScratchDone} // Scratch is done event
-			/>}
-
-			<ScratchView
-				id={2} // optional ScratchView id
-				...
 			/>}
 		</View>)
 	}
