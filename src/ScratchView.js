@@ -35,7 +35,7 @@ class ScratchView extends Component {
         const { isScratchDone } = this.state;
 
         onTouchStateChanged && onTouchStateChanged({ id, touchState });
-        if (!touchState && isScratchDone && !this.hideTimeout) {
+        if (!touchState && isScratchDone && !this.hideTimeout && this.props.fadeOut !== false) {
             const that = this;
             this.hideTimeout = setTimeout(() => {
                 that.setState({ visible: false });
