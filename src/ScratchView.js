@@ -1,8 +1,9 @@
-// ComoScratchImageView.js
 import React, { Component } from 'react';
 import { StyleSheet, Animated, requireNativeComponent } from 'react-native';
 
 const RNTScratchView = requireNativeComponent('RNTScratchView', ScratchView);
+
+const AnimatedScratchView = RNTScratchView && Animated.createAnimatedComponent(RNTScratchView);
 
 class ScratchView extends Component {
     constructor(props) {
@@ -10,6 +11,7 @@ class ScratchView extends Component {
 
         this.state = {
             animatedValue: new Animated.Value(1),
+            isScratchDone: false,
             visible: true,
         };
 
@@ -21,54 +23,66 @@ class ScratchView extends Component {
         };
     }
 
-    onLayout = (e) => {
-        const { width, height } = e.nativeEvent.layout;
-        this.setState({ width, height })
-    };
-
-    onImageLoadFinished = (e) => {
-        this.props.onImageLoadFinished && e.nativeEvent.state && this.props.onImageLoadFinished({ id: this.props.id, touchState: JSON.parse(e.nativeEvent.success) });
+    _onImageLoadFinished = (e) => {
+        const { id, onImageLoadFinished } = this.props;
+        const success = JSON.parse(e.nativeEvent.success);
+        onImageLoadFinished && onImageLoadFinished({ id, success });
     }
 
-    onTouchStateChanged = (e) => {
-        this.props.onTouchStateChanged && e.nativeEvent.state && this.props.onTouchStateChanged({ id: this.props.id, touchState: JSON.parse(e.nativeEvent.state) });
-    }
+    _onTouchStateChanged = (e) => {
+        const { id, onTouchStateChanged } = this.props;
+        const touchState = JSON.parse(e.nativeEvent.touchState);
+        const { isScratchDone } = this.state;
 
-    onScratchProgressChanged = (e) => {
-        this.props.onScratchChanged && e.nativeEvent.value && this.props.onScratchChanged({ id: this.props.id, value: parseFloat(e.nativeEvent.value) });
-    }
-
-    onScratchDone = (e) => {
-        const isDone = JSON.parse(e.nativeEvent.isDone);
-        if (isDone) {
-            this.fadeOut();
+        onTouchStateChanged && onTouchStateChanged({ id, touchState });
+        if (!touchState && isScratchDone && !this.hideTimeout) {
+            const that = this;
+            this.hideTimeout = setTimeout(() => {
+                that.setState({ visible: false });
+            }, 300);
         }
-        this.props.onScratchDone && e.nativeEvent.isDone && this.props.onScratchDone({ id: this.props.id, isDone });
     }
 
-    fadeOut() {
+    _onScratchProgressChanged = (e) => {
+        const { id, onScratchProgressChanged } = this.props;
+        const { progressValue } = e.nativeEvent;
+        onScratchProgressChanged && onScratchProgressChanged({ id, value: parseFloat(progressValue) });
+    }
+
+    _onScratchDone = (e) => {
+        const { id, onScratchDone } = this.props;
+        const isScratchDone = JSON.parse(e.nativeEvent.isScratchDone);
+        if (isScratchDone) {
+            this.setState({
+                isScratchDone,
+            }, () => {
+                this.fadeOut(() => {
+                    onScratchDone && onScratchDone({ id, isScratchDone });
+                });
+            });
+        }
+    }
+
+    fadeOut(postAction) {
         this.state.animatedValue.setValue(1);
         Animated.timing(this.state.animatedValue, {
             toValue: 0,
             duration: 300,
             useNativeDriver: true,
-        }).start(() => { this.setState({ visible: false }); this.props.onTouchStateChanged({ id: this.props.id, touchState: false }) });
+        }).start(postAction);
     }
 
     render() {
-        if (this.state.visible) {
+        if (AnimatedScratchView && this.state.visible) {
             return (
-                <Animated.View style={[styles.container, { opacity: this.state.animatedValue }]} onLayout={this.onLayout}>
-                    <RNTScratchView
-                        {...this.props}
-                        style={{ width: '100%', height: '100%' }}
-                        ref={(ref) => this.ref = ref}
-                        onImageLoadFinished={this.onImageLoadFinished}
-                        onTouchStateChanged={this.onTouchStateChanged}
-                        onScratchProgressChanged={this.onScratchProgressChanged}
-                        onScratchDone={this.onScratchDone}
-                    />
-                </Animated.View>
+                <AnimatedScratchView
+                    {...this.props}
+                    style={[styles.container, { opacity: this.state.animatedValue }]}
+                    onImageLoadFinished={this._onImageLoadFinished}
+                    onTouchStateChanged={this._onTouchStateChanged}
+                    onScratchProgressChanged={this._onScratchProgressChanged}
+                    onScratchDone={this._onScratchDone}
+                />
             );
         }
         return null;
@@ -85,4 +99,3 @@ const styles = StyleSheet.create({
 });
 
 export default ScratchView
-

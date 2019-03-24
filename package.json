@@ -1,11 +1,14 @@
 {
   "name": "react-native-scratch",
   "version": "1.0.0",
-  "description": "Scratch view for react native",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [
+    "react-native"
+  ],
   "author": "Roy Ben-Sasson",
   "license": "MIT",
   "peerDependencies": {

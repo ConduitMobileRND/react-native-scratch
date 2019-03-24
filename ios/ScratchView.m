@@ -27,6 +27,12 @@
 }
 
 
+- (void)layoutSubviews {
+    [self reset];
+    [super layoutSubviews];
+}
+
+
 -(void) setPlaceholderColor:(NSString *)colorString
 {
   @try {
@@ -54,6 +60,7 @@
 -(void) setBrushSize: (float)value
 {
   brushSize = value;
+  [self reset];
 }
 
 -(void)loadImage
@@ -77,22 +84,28 @@
 }
 
 -(void) reset {
-  [self initGrid];
-  [self loadImage];
+  minDimension = self.frame.size.width > self.frame.size.height ? self.frame.size.height: self.frame.size.width;
+  brushSize = brushSize > 0 ? brushSize : minDimension / 10.0f;
+  brushSize = MAX(1, MIN(100, brushSize));
   threshold = threshold > 0 ? threshold : 50;
+  threshold = MAX(1, MIN(100, threshold));
   path = nil;
+  [self loadImage];
+  [self initGrid];
   [self reportScratchProgress];
   [self reportScratchState];
 }
 
 -(void) initGrid
-{
-  int gridSize = sizeof(grid[0]);
+{ 
+  gridSize = MAX(MIN(ceil(minDimension / brushSize), 29), 9);
+  grid = [[NSMutableArray alloc] initWithCapacity: gridSize];
   for (int x = 0; x < gridSize; x++)
   {
+    [grid insertObject:[[NSMutableArray alloc] init] atIndex:x];
     for (int y = 0; y < gridSize; y++)
     {
-      grid[x][y] = true;
+        [[grid objectAtIndex:x] addObject:@(YES)];
     }
   }
   clearPointsCounter = 0;
@@ -102,15 +115,14 @@
 
 -(void) updateGrid: (CGPoint)point
 {
-  float gridSize = (float)sizeof(grid[0]);
   float viewWidth = self.frame.size.width;
   float viewHeight = self.frame.size.height;
-  float pointInGridX = (MAX(MIN(point.x, viewWidth), 0) / viewWidth) * gridSize;
-  float pointInGridY = (MAX(MIN(point.y, viewWidth), 0) / viewHeight) * gridSize;
-  if (grid[(int)pointInGridX][(int)pointInGridY] == true) {
-    grid[(int)pointInGridX][(int)pointInGridY] = false;
+  int pointInGridX = roundf((MAX(MIN(point.x, viewWidth), 0) / viewWidth) * (gridSize - 1.0f));
+  int pointInGridY = roundf((MAX(MIN(point.y, viewHeight), 0) / viewHeight) * (gridSize - 1.0f));
+  if ([[[grid objectAtIndex:pointInGridX] objectAtIndex: pointInGridY] boolValue]) {
+    [[grid objectAtIndex:pointInGridX] replaceObjectAtIndex: pointInGridY withObject: @(NO)];
     clearPointsCounter++;
-    scratchProgress = ((float)clearPointsCounter) / ((float)(gridSize*gridSize)) * 100;
+    scratchProgress = ((float)clearPointsCounter) / (gridSize*gridSize) * 100.0f;
     [self reportScratchProgress];
   }
 }
@@ -120,7 +132,7 @@
   [self reportTouchState:true];
   UITouch *touch = [touches anyObject];
   path = [UIBezierPath bezierPath];
-  path.lineWidth = brushSize > 0 ? brushSize : (self.frame.size.height < self.frame.size.width ? self.frame.size.height : self.frame.size.width) / 10.0f;
+  path.lineWidth = brushSize;
   
   CGPoint point = [touch locationInView:self];
   [path moveToPoint:point];
@@ -148,7 +160,7 @@
 {
   if (path == nil)
   {
-    return
+    return;
   }
   [self reportTouchState:false];
   image = [self drawImage];
@@ -160,7 +172,7 @@
 {
   if (path == nil)
   {
-    return
+    return;
   }
   [self reportTouchState:false];
   image = [self drawImage];
