@@ -42,6 +42,8 @@ public class ScratchView extends View implements View.OnTouchListener {
     Paint imagePaint = new Paint();
     Paint pathPaint = new Paint();
 
+    boolean inited = false;
+
     public ScratchView(Context context) {
         super(context);
         init();
@@ -71,14 +73,6 @@ public class ScratchView extends View implements View.OnTouchListener {
         pathPaint.setAntiAlias(true);
 
         setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (getWidth() > 0) {
-                    reset();
-                }
-            }
-        });
     }
 
     public void setPlaceholderColor(@Nullable String placeholderColor) {
@@ -101,7 +95,6 @@ public class ScratchView extends View implements View.OnTouchListener {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-        reset();
     }
 
     private void loadImage() {
@@ -212,6 +205,10 @@ public class ScratchView extends View implements View.OnTouchListener {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (!inited && getWidth() > 0) {
+            inited = true;
+            reset();
+        }
         if (image == null) {
             canvas.drawColor(this.placeholderColor != -1 ? this.placeholderColor : Color.GRAY);
             return;
