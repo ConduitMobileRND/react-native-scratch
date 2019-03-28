@@ -98,6 +98,10 @@ public class ScratchView extends View implements View.OnTouchListener {
         this.imageUrl = imageUrl;
     }
 
+    public void setLocalImageName(String localImageName) {
+        this.localImageName = localImageName;
+    }
+
     private void loadImage() {
         path = null;
         if (imageUrl != null) {
