@@ -22,8 +22,8 @@
 #### Android
 
 1. Open up `android/app/src/main/java/[...]/MainActivity.java`
-  - Add `import com.reactlibrary.RNScratchPackage;` to the imports at the top of the file
-  - Add `new RNScratchPackage()` to the list returned by the `getPackages()` method
+  - Add `import com.como.RNTScratchView.ScratchViewPackage;` to the imports at the top of the file
+  - Add `new ScratchViewPackage()` to the list returned by the `getPackages()` method
 2. Append the following lines to `android/settings.gradle`:
   	```
   	include ':react-native-scratch'
@@ -31,7 +31,7 @@
   	```
 3. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
   	```
-      compile project(':react-native-scratch')
+      implementation project(':react-native-scratch')
   	```
 
 
@@ -70,13 +70,13 @@ class MyView extends Component {
 			<ComponentB> // will be covered with the ScratchView
 			<ScratchView
 				id={1} // ScratchView id (Optional)
-				brushSize={10} // Default is 10% of the smallest dimension (width/height)
+				brachSize={10} // Default is 10% of the smallest dimension (width/height)
 				threshold={70} // Report full scratch after 70 percentage, change as you see fit. Default is 50
 				fadeOut={false} // Disable the fade out animation when scratch is done. default is true
 				placeholderColor="#AAAAAA" // Scratch color while image is loading (or while image not present)
 				imageUrl="http://yourUrlToImage.jpg" // the url to your image (Optional)
 				onImageLoadFinished={this.onImageLoadFinished} // Event to indicate that the image has done loading
-				onTouchStateChanged={this.onTouchStateChangedMethod} // Touch event (to stop a containing FlatList from scrolling for example)
+				onTouchStateChanged={this.onTouchStateChangedMethod} // Touch event (to stop a containing FlatList for example)
 				onScratchProgressChanged={this.onScratchProgressChanged} // Scratch progress event while scratching
 				onScratchDone={this.onScratchDone} // Scratch is done event
 			/>}
@@ -85,4 +85,3 @@ class MyView extends Component {
 
 export default MyView;
 ```
-  
