@@ -74,7 +74,8 @@ class MyView extends Component {
 				threshold={70} // Report full scratch after 70 percentage, change as you see fit. Default is 50
 				fadeOut={false} // Disable the fade out animation when scratch is done. default is true
 				placeholderColor="#AAAAAA" // Scratch color while image is loading (or while image not present)
-				imageUrl="http://yourUrlToImage.jpg" // the url to your image (Optional)
+				imageUrl="http://yourUrlToImage.jpg" // A url to your image (Optional)
+				localImageName="your_image" // A resource name of an image in the native bundle of the app (drawble for Android, Images.xcassets in iOS) (Optional)
 				onImageLoadFinished={this.onImageLoadFinished} // Event to indicate that the image has done loading
 				onTouchStateChanged={this.onTouchStateChangedMethod} // Touch event (to stop a containing FlatList for example)
 				onScratchProgressChanged={this.onScratchProgressChanged} // Scratch progress event while scratching

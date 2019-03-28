@@ -49,6 +49,11 @@
   imageUrl = url;
 }
 
+-(void) setLocalImageName: (NSString *)imageName
+{
+    localImageName = imageName;
+}
+
 -(void) setThreshold: (float)value
 {
   threshold = value;
@@ -62,21 +67,27 @@
 -(void)loadImage
 {
   UIColor *backgroundColor = placeholderColor != nil ? placeholderColor : [UIColor grayColor];
-  image  = [ScratchViewTools createImageFromColor:backgroundColor];
+  image = [ScratchViewTools createImageFromColor:backgroundColor];
   [self setImage:image];
-  if (imageUrl == nil) {
-    return;
+  if (imageUrl != nil) {
+      NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:[NSURL URLWithString: imageUrl] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+          if (data) {
+              self->image = [UIImage imageWithData:data];
+          }
+          dispatch_sync(dispatch_get_main_queue(), ^{
+              [self setImage:self->image];
+              [self reportImageLoadFinished: data ? true : false];
+          });
+      }];
+      [task resume];
+  } else if (localImageName != nil) {
+      image = [UIImage imageNamed:localImageName];
+      if (image == nil) {
+          image = [ScratchViewTools createImageFromColor:backgroundColor];
+      }
+      [self setImage:image];
+      [self reportImageLoadFinished: true];
   }
-  NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:[NSURL URLWithString: imageUrl] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-    if (data) {
-      self->image = [UIImage imageWithData:data];
-    }
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      [self setImage:self->image];
-      [self reportImageLoadFinished: data ? true : false];
-    });
-  }];
-  [task resume];
 }
 
 -(void) reset {

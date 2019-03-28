@@ -29,6 +29,7 @@ public class ScratchView extends View implements View.OnTouchListener {
     float threshold = 0;
     float brushSize = 0;
     String imageUrl = null;
+    String localImageName = null;
     Bitmap image;
     Path path;
     float minDimension;
@@ -116,6 +117,12 @@ public class ScratchView extends View implements View.OnTouchListener {
                 }
             });
             thread.start();
+        } else if (localImageName != null) {
+            int imageResourceId = getResources().getIdentifier(localImageName, "drawable",
+                    getContext().getPackageName());
+            image = BitmapFactory.decodeResource(getContext().getResources(), imageResourceId);
+            reportImageLoadFinished(true);
+            invalidate();
         }
     }
 

@@ -45,6 +45,13 @@ public class RNTScratchViewManager extends SimpleViewManager<ScratchView> {
         }
     }
 
+    @ReactProp(name = "localImageName")
+    public void setLocalImageName(final ScratchView scratchView, @Nullable String localImageName) {
+        if (scratchView != null) {
+            scratchView.setLocalImageName(localImageName);
+        }
+    }
+
     @Override
     public String getName() {
         return REACT_CLASS;
