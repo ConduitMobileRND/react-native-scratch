@@ -73,6 +73,7 @@
   } else {
       self.contentMode = UIViewContentModeScaleToFill;
   }
+  self.layer.masksToBounds = YES;
 }
 
 -(void) setThreshold: (float)value

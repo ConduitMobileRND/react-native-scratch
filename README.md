@@ -66,8 +66,8 @@ class MyView extends Component {
 
 	render() {
 		return (<View style={{ width: 300, height: 300 }}>
-			<ComponentA> // will be covered with the ScratchView
-			<ComponentB> // will be covered with the ScratchView
+			<ComponentA> // will be covered by the ScratchView
+			<ComponentB> // will be covered by the ScratchView
 			<ScratchView
 				id={1} // ScratchView id (Optional)
 				brushSize={10} // Default is 10% of the smallest dimension (width/height)
