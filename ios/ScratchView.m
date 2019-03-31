@@ -49,27 +49,29 @@
   imageUrl = url;
 }
 
+// Deprecated
 -(void) setLocalImageName: (NSString *)imageName
 {
-    localImageName = imageName;
+    resourceName = imageName;
 }
 
--(void) setResizeMode(NSString * )resizeMode
+-(void) setResourceName: (NSString *)resourceName
+{
+    resourceName = resourceName;
+}
+
+-(void) setResizeMode: (NSString * )resizeMode
 {
   if (resizeMode == nil) {
     return;
   }
   resizeMode = [resizeMode lowercaseString];
-  switch(resizeMode) {
-    case "cover":
-      contentMode = UIViewContentModeScaleAspectFill;
-    break;
-    case "contain":
-      contentMode = UIViewContentModeScaleAspectFit;
-    break;
-    default:
-      contentMode = UIViewContentModeScaletoFill;
-    break;
+  if ([resizeMode isEqualToString:@"cover"]) {
+      self.contentMode = UIViewContentModeScaleAspectFill;
+  } else if ([resizeMode isEqualToString:@"contain"]) {
+      self.contentMode = UIViewContentModeScaleAspectFit;
+  } else {
+      self.contentMode = UIViewContentModeScaleToFill;
   }
 }
 
@@ -99,8 +101,8 @@
           });
       }];
       [task resume];
-  } else if (localImageName != nil) {
-      image = [UIImage imageNamed:localImageName];
+  } else if (resourceName != nil) {
+      image = [UIImage imageNamed:resourceName];
       if (image == nil) {
           image = [ScratchViewTools createImageFromColor:backgroundColor];
       }

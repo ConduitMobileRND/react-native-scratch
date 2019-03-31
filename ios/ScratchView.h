@@ -6,7 +6,7 @@
 @interface ScratchView : UIImageView
 {
   NSString *imageUrl;
-  NSString *localImageName;
+  NSString *resourceName;
   NSString *resizeMode;
   UIColor *placeholderColor;
   float threshold;
