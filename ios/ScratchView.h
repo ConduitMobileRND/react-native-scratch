@@ -7,6 +7,7 @@
 {
   NSString *imageUrl;
   NSString *localImageName;
+  NSString *resizeMode;
   UIColor *placeholderColor;
   float threshold;
   float brushSize;

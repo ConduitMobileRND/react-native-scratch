@@ -54,6 +54,21 @@
     localImageName = imageName;
 }
 
+-(void) setResizeMode(NSString * )resizeMode
+{
+  switch(resizeMode) {
+    case "cover":
+      contentMode = UIViewContentModeScaleAspectFill;
+    break;
+    case "contain":
+      contentMode = UIViewContentModeScaleAspectFit;
+    break;
+    default:
+      contentMode = UIViewContentModeScaletoFill;
+    break;
+  }
+}
+
 -(void) setThreshold: (float)value
 {
   threshold = value;
