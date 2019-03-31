@@ -102,6 +102,11 @@
       [self drawImageStart];
       [self drawImageEnd];
       [self reportImageLoadFinished: true];
+  } else {
+    image = backgroundColorImage;
+    [self drawImageStart];
+    [self drawImageEnd];
+    [self reportImageLoadFinished: true];
   }
 }
 
