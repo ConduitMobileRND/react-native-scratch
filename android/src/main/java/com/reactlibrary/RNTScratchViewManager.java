@@ -52,6 +52,13 @@ public class RNTScratchViewManager extends SimpleViewManager<ScratchView> {
         }
     }
 
+    @ReactProp(name = "resizeMode")
+    public void setResizeMode(final ScratchView scratchView, @Nullable String resizeMode) {
+        if (scratchView != null) {
+            scratchView.setResizeMode(resizeMode);
+        }
+    }
+
     @Override
     public String getName() {
         return REACT_CLASS;
@@ -78,10 +85,15 @@ public class RNTScratchViewManager extends SimpleViewManager<ScratchView> {
 
     public Map getExportedCustomBubblingEventTypeConstants() {
         return MapBuilder.builder()
-                .put(EVENT_IMAGE_LOAD, MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", EVENT_IMAGE_LOAD)))
-                .put(EVENT_TOUCH_STATE_CHANGED, MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", EVENT_TOUCH_STATE_CHANGED)))
-                .put(EVENT_SCRATCH_PROGRESS_CHANGED, MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", EVENT_SCRATCH_PROGRESS_CHANGED)))
-                .put(EVENT_SCRATCH_DONE, MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", EVENT_SCRATCH_DONE)))
+                .put(EVENT_IMAGE_LOAD,
+                        MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", EVENT_IMAGE_LOAD)))
+                .put(EVENT_TOUCH_STATE_CHANGED,
+                        MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", EVENT_TOUCH_STATE_CHANGED)))
+                .put(EVENT_SCRATCH_PROGRESS_CHANGED,
+                        MapBuilder.of("phasedRegistrationNames",
+                                MapBuilder.of("bubbled", EVENT_SCRATCH_PROGRESS_CHANGED)))
+                .put(EVENT_SCRATCH_DONE,
+                        MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", EVENT_SCRATCH_DONE)))
                 .build();
     }
 }

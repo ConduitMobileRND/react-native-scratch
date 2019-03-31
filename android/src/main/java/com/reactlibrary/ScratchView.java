@@ -26,10 +26,12 @@ import java.io.InputStream;
 import java.net.URL;
 
 public class ScratchView extends View implements View.OnTouchListener {
+    boolean imageTakenFromView = false;
     float threshold = 0;
     float brushSize = 0;
     String imageUrl = null;
     String localImageName = null;
+    String resizeMode = "stretch";
     Bitmap image;
     Path path;
     float minDimension;
@@ -44,6 +46,8 @@ public class ScratchView extends View implements View.OnTouchListener {
     Paint pathPaint = new Paint();
 
     boolean inited = false;
+
+    Rect imageRect = null;
 
     public ScratchView(Context context) {
         super(context);
@@ -100,6 +104,12 @@ public class ScratchView extends View implements View.OnTouchListener {
 
     public void setLocalImageName(String localImageName) {
         this.localImageName = localImageName;
+    }
+
+    public void setResizeMode(String resizeMode) {
+        if (resizeMode != null) {
+            this.resizeMode = resizeMode.toLowerCase();
+        }
     }
 
     private void loadImage() {
@@ -220,12 +230,41 @@ public class ScratchView extends View implements View.OnTouchListener {
             inited = true;
             reset();
         }
-        if (image == null) {
+
+        if (!imageTakenFromView) {
             canvas.drawColor(this.placeholderColor != -1 ? this.placeholderColor : Color.GRAY);
+        }
+
+        if (image == null) {
             return;
         }
-        canvas.drawBitmap(image, new Rect(0, 0, image.getWidth(), image.getHeight()),
-                new Rect(0, 0, getWidth(), getHeight()), imagePaint);
+
+        if (imageRect == null) {
+            int offsetX = 0;
+            int offsetY = 0;
+            float imageAspect = image.getWidth() / image.getHeight();
+            float viewAspect = getWidth() / getHeight();
+            switch (resizeMode) {
+            case "cover":
+                if (imageAspect > viewAspect) {
+                    offsetX = (int) (((getHeight() * imageAspect) - getWidth()) / 2.0f);
+                } else {
+                    offsetY = (int) (((getWidth() / imageAspect) - getHeight()) / 2.0f);
+                }
+                break;
+            case "contain":
+                if (imageAspect < viewAspect) {
+                    offsetX = (int) (((getHeight() / imageAspect) - getWidth()) / 2.0f);
+                } else {
+                    offsetY = (int) (((getWidth() * imageAspect) - getHeight()) / 2.0f);
+                }
+                break;
+            }
+            imageRect = new Rect(-offsetX, -offsetY, getWidth() + offsetX, getHeight() + offsetY);
+        }
+
+        canvas.drawBitmap(image, new Rect(0, 0, image.getWidth(), image.getHeight()), imageRect, imagePaint);
+
         if (path != null) {
             canvas.drawPath(path, pathPaint);
         }
@@ -238,10 +277,11 @@ public class ScratchView extends View implements View.OnTouchListener {
 
         switch (motionEvent.getAction()) {
         case MotionEvent.ACTION_DOWN:
+            image = createBitmapFromView();
             reportTouchState(true);
             float strokeWidth = brushSize > 0 ? brushSize
                     : ((getHeight() < getWidth() ? getHeight() : getWidth()) / 10f);
-            image = createBitmapFromView();
+            imageRect = new Rect(0, 0, getWidth(), getHeight());
             pathPaint.setStrokeWidth(strokeWidth);
             path = new Path();
             path.moveTo(x, y);
@@ -267,6 +307,7 @@ public class ScratchView extends View implements View.OnTouchListener {
         Bitmap bitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(bitmap);
         draw(c);
+        imageTakenFromView = true;
         return bitmap;
     }
 }
