@@ -76,6 +76,7 @@ class MyView extends Component {
 				placeholderColor="#AAAAAA" // Scratch color while image is loading (or while image not present)
 				imageUrl="http://yourUrlToImage.jpg" // A url to your image (Optional)
 				localImageName="your_image" // An image resource name (without the extension like '.png/jpg etc') in the native bundle of the app (drawble for Android, Images.xcassets in iOS) (Optional)
+				resizeMode="cover|contain|stretch" // Resize the image to fit or fill the scratch view
 				onImageLoadFinished={this.onImageLoadFinished} // Event to indicate that the image has done loading
 				onTouchStateChanged={this.onTouchStateChangedMethod} // Touch event (to stop a containing FlatList for example)
 				onScratchProgressChanged={this.onScratchProgressChanged} // Scratch progress event while scratching

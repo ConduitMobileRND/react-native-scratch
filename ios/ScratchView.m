@@ -56,6 +56,10 @@
 
 -(void) setResizeMode(NSString * )resizeMode
 {
+  if (resizeMode == nil) {
+    return;
+  }
+  resizeMode = [resizeMode lowercaseString];
   switch(resizeMode) {
     case "cover":
       contentMode = UIViewContentModeScaleAspectFill;
