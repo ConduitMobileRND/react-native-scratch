@@ -169,9 +169,9 @@
       }
     } else if ([resizeMode isEqualToString:@"contain"]) {
       if (imageAspect < viewAspect) {
-            offsetX = (int) (((selfSize.height / imageAspect) - selfSize.width) / 2.0f);
+            offsetX = (int) (((selfSize.height * imageAspect) - selfSize.width) / 2.0f);
         } else {
-            offsetY = (int) (((selfSize.width * imageAspect) - selfSize.height) / 2.0f);
+            offsetY = (int) (((selfSize.width / imageAspect) - selfSize.height) / 2.0f);
         }
     } else {
     }

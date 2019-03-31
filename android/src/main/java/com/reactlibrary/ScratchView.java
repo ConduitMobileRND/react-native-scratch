@@ -253,9 +253,9 @@ public class ScratchView extends View implements View.OnTouchListener {
                 break;
             case "contain":
                 if (imageAspect < viewAspect) {
-                    offsetX = (int) (((getHeight() / imageAspect) - getWidth()) / 2.0f);
+                    offsetX = (int) (((getHeight() * imageAspect) - getWidth()) / 2.0f);
                 } else {
-                    offsetY = (int) (((getWidth() * imageAspect) - getHeight()) / 2.0f);
+                    offsetY = (int) (((getWidth() / imageAspect) - getHeight()) / 2.0f);
                 }
                 break;
             }
