@@ -15,7 +15,9 @@ RCT_EXPORT_VIEW_PROPERTY(placeholderColor, NSString)
 RCT_EXPORT_VIEW_PROPERTY(threshold, float)
 RCT_EXPORT_VIEW_PROPERTY(brushSize, float)
 RCT_EXPORT_VIEW_PROPERTY(imageUrl, NSString);
-RCT_EXPORT_VIEW_PROPERTY(localImageName, NSString);
+RCT_EXPORT_VIEW_PROPERTY(localImageName, NSString); // deprecated
+RCT_EXPORT_VIEW_PROPERTY(resourceName, NSString);
+RCT_EXPORT_VIEW_PROPERTY(resizeMode, NSString);
 RCT_EXPORT_VIEW_PROPERTY(onImageLoadFinished, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onTouchStateChanged, RCTBubblingEventBlock);
 RCT_EXPORT_VIEW_PROPERTY(onScratchProgressChanged, RCTBubblingEventBlock);
