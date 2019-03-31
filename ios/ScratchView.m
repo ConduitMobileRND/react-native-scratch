@@ -30,18 +30,14 @@
     [super layoutSubviews];
 }
 
-
 -(void) setPlaceholderColor:(NSString *)colorString
 {
   @try {
-    placeholderColor = [ScratchViewTools colorFromHexString:colorString];
+    self->placeholderColor = [ScratchViewTools colorFromHexString:colorString];
   }
   @catch (NSException *exception) {
     NSLog(@"placeholderColor error: %@", exception.reason);
   }
-  UIColor *backgroundColor = placeholderColor != nil ? placeholderColor : [UIColor grayColor];
-  image = [ScratchViewTools createImageFromColor:backgroundColor];
-  [self setImage:image];
 }
 
 -(void) setImageUrl:(NSString *)url
@@ -57,7 +53,7 @@
 
 -(void) setResourceName: (NSString *)resourceName
 {
-    resourceName = resourceName;
+    self->resourceName = resourceName;
 }
 
 -(void) setResizeMode: (NSString * )resizeMode
@@ -65,14 +61,7 @@
   if (resizeMode == nil) {
     return;
   }
-  resizeMode = [resizeMode lowercaseString];
-  if ([resizeMode isEqualToString:@"cover"]) {
-      self.contentMode = UIViewContentModeScaleAspectFill;
-  } else if ([resizeMode isEqualToString:@"contain"]) {
-      self.contentMode = UIViewContentModeScaleAspectFit;
-  } else {
-      self.contentMode = UIViewContentModeScaleToFill;
-  }
+  self->resizeMode = [resizeMode lowercaseString];
   self.layer.masksToBounds = YES;
 }
 
@@ -89,25 +78,29 @@
 -(void)loadImage
 {
   UIColor *backgroundColor = placeholderColor != nil ? placeholderColor : [UIColor grayColor];
-  image = [ScratchViewTools createImageFromColor:backgroundColor];
-  [self setImage:image];
+  self->backgroundColorImage = [ScratchViewTools createImageFromColor:backgroundColor];
+  [self setImage:backgroundColorImage];
   if (imageUrl != nil) {
       NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithURL:[NSURL URLWithString: imageUrl] completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
           if (data) {
               self->image = [UIImage imageWithData:data];
+          } else {
+            image = backgroundColorImage;
           }
           dispatch_sync(dispatch_get_main_queue(), ^{
-              [self setImage:self->image];
-              [self reportImageLoadFinished: data ? true : false];
+            [self drawImageStart];
+            [self drawImageEnd];
+            [self reportImageLoadFinished: data ? true : false];
           });
       }];
       [task resume];
   } else if (resourceName != nil) {
       image = [UIImage imageNamed:resourceName];
       if (image == nil) {
-          image = [ScratchViewTools createImageFromColor:backgroundColor];
+          image = backgroundColorImage;
       }
-      [self setImage:image];
+      [self drawImageStart];
+      [self drawImageEnd];
       [self reportImageLoadFinished: true];
   }
 }
@@ -156,6 +149,64 @@
   }
 }
 
+-(void) drawImageStart {
+  CGSize selfSize = self.frame.size;
+  CGSize imgSize = image.size;
+  CGFloat scale = image.scale;
+  UIGraphicsBeginImageContextWithOptions(self.frame.size, NO, scale);
+
+  if (!imageTakenFromView) {
+    [backgroundColorImage drawInRect:CGRectMake(0, 0, selfSize.width, selfSize.height)];
+    int offsetX = 0;
+    int offsetY = 0;
+    float imageAspect = imgSize.width / imgSize.height;
+    float viewAspect = selfSize.width / selfSize.height;
+    if ([resizeMode isEqualToString:@"cover"]) {
+      if (imageAspect > viewAspect) {
+          offsetX = (int) (((selfSize.height * imageAspect) - selfSize.width) / 2.0f);
+      } else {
+          offsetY = (int) (((selfSize.width / imageAspect) - selfSize.height) / 2.0f);
+      }
+    } else if ([resizeMode isEqualToString:@"contain"]) {
+      if (imageAspect < viewAspect) {
+            offsetX = (int) (((selfSize.height / imageAspect) - selfSize.width) / 2.0f);
+        } else {
+            offsetY = (int) (((selfSize.width * imageAspect) - selfSize.height) / 2.0f);
+        }
+    } else {
+    }
+    imageRect = CGRectMake(-offsetX, -offsetY, selfSize.width + (offsetX * 2), selfSize.height + (offsetY * 2));
+  }
+  else {
+    imageRect = CGRectMake(0, 0, selfSize.width, selfSize.height);
+  }
+  
+  if (image == nil) {
+    return;
+  }
+  [image drawInRect:imageRect];
+}
+
+- (UIImage *) drawImage
+{
+  if (path != nil) {
+    [path strokeWithBlendMode:kCGBlendModeClear alpha:0];
+  }
+  UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+  [self setImage:newImage];
+  return newImage;
+}
+
+-(void) drawImageEnd {
+  if (image == nil) {
+    return;
+  }
+  imageTakenFromView = YES;
+  image = [self drawImage];
+  UIGraphicsEndImageContext();
+  path = nil;
+}
+
 -(void) touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
   [self reportTouchState:true];
@@ -165,11 +216,7 @@
   
   CGPoint point = [touch locationInView:self];
   [path moveToPoint:point];
-  
-  CGSize imgSize = self.frame.size;
-  CGFloat scale = 0;
-  UIGraphicsBeginImageContextWithOptions(self.frame.size, NO, scale);
-  [image drawInRect:CGRectMake(0, 0, imgSize.width, imgSize.height)];
+  [self drawImageStart];
 }
 
 -(void) touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
@@ -192,9 +239,7 @@
     return;
   }
   [self reportTouchState:false];
-  image = [self drawImage];
-  UIGraphicsEndImageContext();
-  path = nil;
+  [self drawImageEnd];
 }
 
 -(void) touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event
@@ -204,19 +249,7 @@
     return;
   }
   [self reportTouchState:false];
-  image = [self drawImage];
-  UIGraphicsEndImageContext();
-  path = nil;
-}
-
-- (UIImage *) drawImage
-{
-  if (path != nil) {
-    [path strokeWithBlendMode:kCGBlendModeClear alpha:0];
-  }
-  UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-  [self setImage:newImage];
-  return newImage;
+  [self drawImageEnd];
 }
 
 -(void) reportImageLoadFinished:(BOOL)success {

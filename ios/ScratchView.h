@@ -8,9 +8,11 @@
   NSString *imageUrl;
   NSString *resourceName;
   NSString *resizeMode;
+  CGRect imageRect;
   UIColor *placeholderColor;
   float threshold;
   float brushSize;
+  UIImage *backgroundColorImage;
   UIImage *image;
   UIBezierPath *path;
   float minDimension;
@@ -19,6 +21,7 @@
   bool cleared;
   int clearPointsCounter;
   float scratchProgress;
+  bool imageTakenFromView;
 
   id<ScratchViewDelegate> _delegate;
 }
