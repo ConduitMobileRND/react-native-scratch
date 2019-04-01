@@ -241,21 +241,23 @@ public class ScratchView extends View implements View.OnTouchListener {
         if (imageRect == null) {
             int offsetX = 0;
             int offsetY = 0;
-            float imageAspect = image.getWidth() / image.getHeight();
-            float viewAspect = getWidth() / getHeight();
+            float viewWidth = (float) getWidth();
+            float viewHeight = (float) getHeight();
+            float imageAspect = (float) image.getWidth() / (float) image.getHeight();
+            float viewAspect = viewWidth / viewHeight;
             switch (resizeMode) {
             case "cover":
                 if (imageAspect > viewAspect) {
-                    offsetX = (int) (((getHeight() * imageAspect) - getWidth()) / 2.0f);
+                    offsetX = (int) (((viewHeight * imageAspect) - viewWidth) / 2.0f);
                 } else {
-                    offsetY = (int) (((getWidth() / imageAspect) - getHeight()) / 2.0f);
+                    offsetY = (int) (((viewWidth / imageAspect) - viewHeight) / 2.0f);
                 }
                 break;
             case "contain":
                 if (imageAspect < viewAspect) {
-                    offsetX = (int) (((getHeight() * imageAspect) - getWidth()) / 2.0f);
+                    offsetX = (int) (((viewHeight * imageAspect) - viewWidth) / 2.0f);
                 } else {
-                    offsetY = (int) (((getWidth() / imageAspect) - getHeight()) / 2.0f);
+                    offsetY = (int) (((viewWidth / imageAspect) - viewHeight) / 2.0f);
                 }
                 break;
             }
