@@ -1,6 +1,6 @@
 {
   "name": "react-native-scratch",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Scratch view for react native",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,15 @@
     "url": "https://github.com/ConduitMobileRND/react-native-scratch"
   },
   "keywords": [
-    "react-native"
+    "react-native",
+    "react-native-scratch",
+    "react-native-scratch-view",
+    "react-native-scratch-card",
+    "react-native-scratch-image",
+    "scratch",
+    "scratch-card",
+    "scratch-view",
+    "scratch-image"
   ],
   "author": "Roy Ben-Sasson",
   "license": "MIT",
