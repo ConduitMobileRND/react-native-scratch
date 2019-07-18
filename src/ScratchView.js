@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { StyleSheet, Animated, requireNativeComponent ,Image,View,Text} from 'react-native';
+import { StyleSheet, Animated, requireNativeComponent ,ImageBackground,View,Text} from 'react-native';
 
 
 const RNTScratchView = requireNativeComponent('RNTScratchView', ScratchView);
 
-const AnimatedScratchView = RNTScratchView
+const AnimatedScratchView =  RNTScratchView
 
 class ScratchView extends Component {
     constructor(props) {
@@ -84,16 +84,15 @@ class ScratchView extends Component {
             return (
                <View style={[this.props.imageStyle]} >
                    
-                 <Image source={{uri:this.props.hiddenImageURL}} style={this.props.imageStyle}  /> 
+                 <ImageBackground source={{uri:this.props.hiddenImageURL}} style={this.props.imageStyle}  >{this.props.renderScratchedText()}</ImageBackground> 
                 <AnimatedScratchView
                     {...this.props}
-                    style={[styles.container,{flex:1,borderRadius:5}]}
+                    style={[styles.container]}
                     onImageLoadFinished={this._onImageLoadFinished}
                     onTouchStateChanged={this._onTouchStateChanged}
                     onScratchProgressChanged={this._onScratchProgressChanged}
                     onScratchDone={this._onScratchDone}
                 />
-                <Text>{this.state.scratchPercent}</Text>
                 </View>
                
             );
