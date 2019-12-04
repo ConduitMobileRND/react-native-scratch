@@ -74,6 +74,8 @@ public class ScratchView extends View implements View.OnTouchListener {
 
         pathPaint.setAlpha(0);
         pathPaint.setStyle(Paint.Style.STROKE);
+        pathPaint.setStrokeJoin(Paint.Join.ROUND);
+        pathPaint.setStrokeCap(Paint.Cap.ROUND);
         pathPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
         pathPaint.setAntiAlias(true);
 
