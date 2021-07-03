@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { StyleSheet, Animated, requireNativeComponent } from 'react-native';
+import { StyleSheet, Animated, requireNativeComponent ,ImageBackground,View,Text} from 'react-native';
+
 
 const RNTScratchView = requireNativeComponent('RNTScratchView', ScratchView);
 
-const AnimatedScratchView = RNTScratchView && Animated.createAnimatedComponent(RNTScratchView);
+const AnimatedScratchView =  RNTScratchView
 
 class ScratchView extends Component {
     constructor(props) {
@@ -13,6 +14,7 @@ class ScratchView extends Component {
             animatedValue: new Animated.Value(1),
             isScratchDone: false,
             visible: true,
+            scratchPercent:0
         };
 
         this.scratchOpacity = {
@@ -47,6 +49,7 @@ class ScratchView extends Component {
         const { id, onScratchProgressChanged } = this.props;
         const { progressValue } = e.nativeEvent;
         onScratchProgressChanged && onScratchProgressChanged({ id, value: parseFloat(progressValue) });
+        this.setState({scratchPercent:parseFloat(progressValue)})
     }
 
     _onScratchDone = (e) => {
@@ -79,14 +82,19 @@ class ScratchView extends Component {
     render() {
         if (AnimatedScratchView && this.state.visible) {
             return (
+               <View style={[this.props.imageStyle]} >
+                   
+                 <ImageBackground source={{uri:this.props.hiddenImageURL}} style={this.props.imageStyle}  >{this.props.renderScratchedText()}</ImageBackground> 
                 <AnimatedScratchView
                     {...this.props}
-                    style={[styles.container, { opacity: this.state.animatedValue }]}
+                    style={[styles.container]}
                     onImageLoadFinished={this._onImageLoadFinished}
                     onTouchStateChanged={this._onTouchStateChanged}
                     onScratchProgressChanged={this._onScratchProgressChanged}
                     onScratchDone={this._onScratchDone}
                 />
+                </View>
+               
             );
         }
         return null;
@@ -96,7 +104,7 @@ class ScratchView extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        position: 'absolute',
+       position:"absolute",
         width: '100%',
         height: '100%'
     },
